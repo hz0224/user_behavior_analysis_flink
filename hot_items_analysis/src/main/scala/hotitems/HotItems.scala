@@ -87,6 +87,7 @@ class MyKeyedProcessFunction(topN: Int) extends KeyedProcessFunction[Long,ItemVi
     new ListStateDescriptor[ItemViewCount]("",classOf[ItemViewCount])
   )
 
+  //processElement方法不进行输出，放到onTimer方法里进行输出
   override def processElement(i: ItemViewCount, context: KeyedProcessFunction[Long, ItemViewCount, String]#Context, collector: Collector[String]) = {
     //1 将窗口内的所有数据保存到状态里
     allItemState.add(i)
