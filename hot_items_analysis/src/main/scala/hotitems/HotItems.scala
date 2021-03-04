@@ -72,6 +72,7 @@ class CountAgg() extends AggregateFunction[UserBehavior,Long,Long]{
 }
 
 //自定义窗口函数 在 org.apache.flink.streaming.api.scala.function.WindowFunction 这个包下
+//WindowFunction[IN, OUT, KEY, W <: Window] 这里IN的类型是预聚合函数的输出类型，OUT是整个窗口函数aggregate最终返回的类型。
 class ItemViewCountResult() extends WindowFunction[Long,ItemViewCount,Long,TimeWindow]{
   override def apply(key: Long, window: TimeWindow, input: Iterable[Long], out: Collector[ItemViewCount]): Unit = {
        //Iterable里只有一条数据，就是预聚合函数得到的结果

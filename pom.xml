@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>hot_items_analysis</module>
+        <module>network_flow_analysis</module>
     </modules>
 
     <properties>
