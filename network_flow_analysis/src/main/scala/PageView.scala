@@ -1,12 +1,13 @@
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.{KeyedProcessFunction, ProcessFunction}
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.scala.function.WindowFunction
+import org.apache.flink.streaming.api.scala.function.{ProcessWindowFunction, WindowFunction}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
+
 import scala.util.Random
 
 case class UserBehavior(userId: Long, itemId: Long, categoryId: Int, behavior: String, ts: Long)
@@ -45,7 +46,8 @@ object PageView {
 
     //这样使用sum时是来一条计算一条输出一条结果,我们不想要这样的结果,我们想要一次输出聚合结果,因此还要使用定时器加状态来完成.
 //    val resultDStream = windowedDStream.keyBy(_.windowEnd).sum(1)
-    val resultDStream = windowedDStream.keyBy(_.windowEnd).process(new CustomKeyedProcessFunction())  //因为我们需要拿到当前分组key的值注册定时器，因此使用的是keyedProcessFunction
+    val resultDStream = windowedDStream.keyBy(_.windowEnd).process(new CustomKeyedProcessFunction())
+    //因为我们需要拿到当前分组key的值注册定时器，因此使用的是keyedProcessFunction
     resultDStream.print()
 
     //统计pv时不需要考虑窗口数据量大小的问题，因为不需要对所有的数据作去重操作，因此最后不需要保存所有数据，只是简单的维护了一个递增的状态.
@@ -70,6 +72,7 @@ class FullWindowFunction() extends WindowFunction[Long,PvCount,String,TimeWindow
     out.collect(PvCount(window.getEnd, input.head))
   }
 }
+
 //KeyedProcessFunction<K, I, O>
 class CustomKeyedProcessFunction() extends KeyedProcessFunction[Long, PvCount, PvCount]{
   lazy val pvCountState: ValueState[Long] = getRuntimeContext.getState(
