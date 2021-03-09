@@ -45,7 +45,7 @@ object PageView {
 
     //这样使用sum时是来一条计算一条输出一条结果,我们不想要这样的结果,我们想要一次输出聚合结果,因此还要使用定时器加状态来完成.
 //    val resultDStream = windowedDStream.keyBy(_.windowEnd).sum(1)
-    val resultDStream = windowedDStream.keyBy(_.windowEnd).process(new CustomKeyedProcessFunction())
+    val resultDStream = windowedDStream.keyBy(_.windowEnd).process(new CustomKeyedProcessFunction())  //因为我们需要拿到当前分组key的值注册定时器，因此使用的是keyedProcessFunction
     resultDStream.print()
 
     //统计pv时不需要考虑窗口数据量大小的问题，因为不需要对所有的数据作去重操作，因此最后不需要保存所有数据，只是简单的维护了一个递增的状态.
