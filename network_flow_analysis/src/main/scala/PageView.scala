@@ -18,7 +18,7 @@ object PageView {
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
-    env.setParallelism(1)
+    env.setParallelism(10)
     val inputDStream = env.readTextFile("C:\\Users\\Administrator\\Desktop\\UserBehavior.csv")
     val userBehaviorDStream = inputDStream.map{line=>
         val data = line.split(",")
