@@ -32,7 +32,7 @@ object PageView {
 //                        .aggregate(new PageAgg(),new FullWindowFunction())
 //    resultDStream.print()
 
-    //方式二：所有的数据分到多个分区里，每个分区里都开一个窗口.
+    //方式二：所有的数据分到多个分区里，每个分区里都开一个窗口，优化并行度
     val windowedDStream = userBehaviorDStream.filter{userBehavior=>"pv".equals(userBehavior.behavior)}
       .map{userBehavior=>
           val i = Random.nextInt(10)
